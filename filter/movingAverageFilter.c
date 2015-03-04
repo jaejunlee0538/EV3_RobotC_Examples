@@ -15,10 +15,9 @@ Moving average filter is a variant of average filter.
 while average filter uses the whole data for calculating an average,
 moving average filter,specifically N moving average filter, uses only latest N data.
 Because of this difference, moving average filter is more responsive than average filter.
-But in other words, it is more unstable.
+In some sense, it is more unstable or sensitive.
 But the thing is you can compromise between responsibility and stability by manipulating a parameter.
-
-The only parameter you can play with in movingAverageFilter is N_data.
+That is N_data and it is the only parameter you can play with here.
 N_data is about how many data you will use for calulating average.
 
 #See what happens when you give 1, 20 for N_data#
@@ -41,12 +40,13 @@ float movingAverageFilter(float data)
 	else{
 		filtered_data = (N_data * filtered_data - data_array[0] + data) / N_data;
 
-		//shift data array, excepting an oldest data, to 1 left.
+		//shifting data array by 1 to the left, and the oldest data will be overwritten.
 		for(int i=1;i<N_data;i++)
 		{
 			data_array[i-1] = data_array[i];
 		}
 
+		//pushing back latest data in the end of the array.
 		data_array[N_data-1] = data;
 	}
 	return filtered_data;
