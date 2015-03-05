@@ -7,14 +7,44 @@
 #pragma config(Motor,  motorC,          rightMotor,    tmotorEV3_Large, PIDControl, driveRight, encoder)
 #pragma config(Motor,  motorD,           ,             tmotorEV3_Large, openLoop)
 
-task main()
-{
-	const float SAFE_DISTANCE = 20.0;
+#define SAFE_DISTANCE  20.0
 
-	while(true){
-		float distance = getUSDistance(sonarSensor);
-		int speed = 0;
-		speed =  3.0 * (distance - SAFE_DISTANCE);
+int getSpeed1(float distance)
+{
+	if(distance > SAFE_DISTANCE)
+	{
+		return 30;
+	}
+	else if(distance < SAFE_DISTANCE)
+	{
+		return -30;
+	}
+	else
+	{
+		return 0;
+	}
+}
+
+int getSpeed2(float distance)
+{
+	int speed =  distance - SAFE_DISTANCE;
+
+	//Bounding speed input.
+	if(speed > 100)
+	{
+		speed = 100;
+	}
+	else if(speed < -100)
+	{
+		speed = -100;
+	}
+
+	return speed;
+}
+
+int getSpeed3(float distance)
+{
+		int speed =  4.0 * (distance - SAFE_DISTANCE);
 
 		//Bounding speed input.
 		if(speed > 100)
@@ -25,8 +55,26 @@ task main()
 		{
 			speed = -100;
 		}
-		setMotorSpeed(leftMotor, speed);
-		setMotorSpeed(rightMotor, speed);
-		wait10Msec(10);
+
+		return speed;
+}
+
+task main()
+{
+
+	while(true){
+		float distance = getUSDistance(sonarSensor);
+
+		if(distance > 250)
+		{
+			setMotorSpeed(leftMotor, 0);
+			setMotorSpeed(rightMotor, 0);
+		}
+		else{
+			int speed = getSpeed3(distance);
+
+			setMotorSpeed(leftMotor, speed);
+			setMotorSpeed(rightMotor, speed);
+		}
 	}
 }
