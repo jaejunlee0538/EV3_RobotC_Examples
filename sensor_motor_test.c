@@ -17,8 +17,9 @@ Color : Take the sensor on the white object and black object.
 Touch : Press and release the button.
 Gyro  : Rotate the robot.
 */
-
 	resetGyro(gyroSensor);
+
+	displayBigTextLine(2,"Hello World");
 
 	/*
 	Go forward
@@ -27,6 +28,7 @@ Gyro  : Rotate the robot.
 	wait1Msec(500);
 	setMotorSpeed(leftMotor, 30);
 	setMotorSpeed(rightMotor, 30);
+	setLEDColor(ledRed);
 
 	/*
 	Go backward
@@ -35,6 +37,7 @@ Gyro  : Rotate the robot.
 	wait1Msec(500);
 	setMotorSpeed(leftMotor, -30);
 	setMotorSpeed(rightMotor, -30);
+	setLEDColor(ledRedFlash);
 
 	/*
 	Turn left
@@ -43,6 +46,7 @@ Gyro  : Rotate the robot.
 	wait1Msec(500);
 	setMotorSpeed(leftMotor, -30);
 	setMotorSpeed(rightMotor, 30);
+	setLEDColor(ledGreenPulse);
 
 	/*
 	Turn right
@@ -51,12 +55,16 @@ Gyro  : Rotate the robot.
 	wait1Msec(500);
 	setMotorSpeed(leftMotor, 30);
 	setMotorSpeed(rightMotor, -30);
+	setLEDColor(ledOrange);
 
 	/*
 	Terminating Sound
 	*/
 	while(!getButtonPress(buttonEnter));
+	setMotorSpeed(leftMotor, 0);
+	setMotorSpeed(rightMotor, 0);
 	playSoundFile("Dog growl");
 	while(bSoundActive);
+	setLEDColor(ledRedFlash);
 
 }
