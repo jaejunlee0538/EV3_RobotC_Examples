@@ -1,3 +1,5 @@
 EV3_RobotC_Examples
 
-![ScreenShot](https://raw.githubusercontent.com/jaejunlee0538/EV3_RobotC_Examples/blob/master/resources/educator_robot_pic.JPG)
+See also.
+http://www.intorobotics.com/best-lego-mindstorms-ev3-robotics-projects/
+http://thetechnicgear.com/2014/03/howto-create-line-following-robot-using-mindstorms/
