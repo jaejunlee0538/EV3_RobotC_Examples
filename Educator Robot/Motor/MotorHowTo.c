@@ -42,6 +42,29 @@ task main()
 	moveMotorTarget(leftMotor, 90, 20);
 	waitUntilMotorStop(leftMotor);
 	//sleep(2000);
+
+
+	/*
+	It seems that rotational direction is only depending on the sign of speed.
+	Looking at 3rd case, position value is negative but it moves forward.
+	*/
+	//Forward
+	moveMotorTarget(leftMotor, 50, 50);
+	waitUntilMotorStop(leftMotor);
+	wait1Msec(1000);
+	//Backward
+	moveMotorTarget(leftMotor, 50, -50);
+	waitUntilMotorStop(leftMotor);
+	wait1Msec(1000);
+	//Forward
+	moveMotorTarget(leftMotor, -50, 50);
+	waitUntilMotorStop(leftMotor);
+	wait1Msec(1000);
+	//Backward
+	moveMotorTarget(leftMotor, -50, -50);
+	waitUntilMotorStop(leftMotor);
+	wait1Msec(1000);
+
 #endif
 
 #ifdef DEMO_ABSOLUTE_TARGET
