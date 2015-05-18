@@ -44,6 +44,9 @@ int get_pressed_button()
 void wait_start_signal(void)
 {
 	playSoundFile("Ready");
+	eraseDisplay();
+	displayBigTextLine(0,"press ENTER");
+	displayBigTextLine(2,"   to start");
 	button_blocking(buttonEnter);
 }
 
@@ -348,12 +351,55 @@ void gain_tuning(PID_gains* gains)
 	}
 }
 
+/*****************************************Save/Read Parameters*********************************************/
+bool save_parameters(const float* p_gain, const float* i_gain, const float* d_gain, const int* motor_power)
+{
+	long file = fileOpenWrite("line_tracer_params.param");
+	bool good = true;
+	good &= fileWriteFloat(file, *p_gain);
+	good &= fileWriteFloat(file, *i_gain);
+	good &= fileWriteFloat(file, *d_gain);
+	good &= fileWriteFloat(file, *motor_power);
+
+	good &= fileClose(file);
+
+	return good;
+}
+
+bool read_params(float* p_gain, float* i_gain, float* d_gain, int* motor_power)
+{
+	float motor_power_f = 0.0;
+	long file = fileOpenRead("line_tracer_params.param");
+	bool good = true;
+	good &= fileReadFloat(file,p_gain);
+	good &= fileReadFloat(file,i_gain);
+	good &= fileReadFloat(file,d_gain);
+	good &= fileReadFloat(file,&motor_power_f);
+	*motor_power = (int)motor_power_f;
+
+	good &= fileClose(file);
+
+	return good;
+}
+
 /*****************************************Main function*********************************************/
+
+void display_help(const int *motor_power, const float *P_gain, const float *I_gain, const float *D_gain)
+{
+	eraseDisplay();
+	displayBigTextLine(0,"Enter:gain tune");
+	displayBigTextLine(2,"Up   :Speed Up");
+	displayBigTextLine(4,"Down :Speed Down");
+	displayBigTextLine(6,"power : %d", *motor_power);
+	displayBigTextLine(8,"P : %.4f", *P_gain);
+	displayBigTextLine(10,"I : %.4f", *I_gain);
+	displayBigTextLine(12,"D : %.4f", *D_gain);
+}
 
 task main()
 {
 
-	unsigned short reflected_middle = 42;
+	unsigned short reflected_middle = 45;
 	//unsigned short reflected_black, reflected_white;
 	//getColorReflected(colorSensor);
 	//wait1Msec(500);
@@ -371,18 +417,24 @@ task main()
 
 	wait_start_signal();
 
-	int motor_power = 60;
+	int motor_power = 50;
 	int steering = 0;
 	int error=0;
 	int last_error=0;
 	int error_integration=0;
 
-	float P_gain = 2.0;
-	float I_gain = 0.0;
-	float D_gain = 1.0;
+	float P_gain = 0.4;
+	float I_gain = 0.05;
+	float D_gain = 0.9;
+
+	//try reading lastly saved parameters
+	read_params(&P_gain, &I_gain, &D_gain, &motor_power);
 
 	unsigned int reflected_value;
 	PID_gains pid_gains;
+
+	bool display_updated = true;
+	display_help(&motor_power, &P_gain, &I_gain, &D_gain);
 	while(true)
 	{
 		reflected_value = getColorReflected(colorSensor);
@@ -408,6 +460,49 @@ task main()
 			D_gain = pid_gains.D;
 
 			wait_start_signal();
+			display_updated = true;
+		}
+
+		if(getButtonPress(buttonUp))
+		{
+			motor_power += 5;
+			if(motor_power > 100)
+				motor_power = 100;
+			display_updated = true;
+			while(getButtonPress(buttonUp));
+		}
+
+		if(getButtonPress(buttonDown))
+		{
+			motor_power -= 5;
+			if(motor_power < -100)
+				motor_power = -100;
+			display_updated = true;
+			while(getButtonPress(buttonDown));
+		}
+
+		if(getButtonPress(buttonLeft))
+		{
+			clearTimer(T3);
+			while(getButtonPress(buttonLeft) && (time1[T3]<1500))
+			{
+			}
+			if(time1[T3] >= 1500)
+			{
+				eraseDisplay();
+				displayBigTextLine(2,"Saving Parameters...");
+				save_parameters(&P_gain, &I_gain, &D_gain, &motor_power);
+				wait1Msec(800);
+				displayBigTextLine(5,"..........Done");
+				wait1Msec(300);
+			}
+			while(getButtonPress(buttonLeft));
+		}
+
+		if(display_updated)
+		{
+			display_help(&motor_power, &P_gain, &I_gain, &D_gain);
+			display_updated = false;
 		}
 	}
 
