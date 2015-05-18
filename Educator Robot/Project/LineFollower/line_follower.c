@@ -394,6 +394,8 @@ void display_help(const int *motor_power, const float *P_gain, const float *I_ga
 	displayBigTextLine(8,"P : %.4f", *P_gain);
 	displayBigTextLine(10,"I : %.4f", *I_gain);
 	displayBigTextLine(12,"D : %.4f", *D_gain);
+	displayTextLine(14,"keep pressing LEFT ");
+	displayTextLine(15,"  to save current params" );
 }
 
 task main()
@@ -494,9 +496,10 @@ task main()
 				save_parameters(&P_gain, &I_gain, &D_gain, &motor_power);
 				wait1Msec(800);
 				displayBigTextLine(5,"..........Done");
-				wait1Msec(300);
+				wait1Msec(800);
 			}
 			while(getButtonPress(buttonLeft));
+			display_updated = true;
 		}
 
 		if(display_updated)
