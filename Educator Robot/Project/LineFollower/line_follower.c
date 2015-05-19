@@ -400,7 +400,6 @@ void display_help(const int *motor_power, const float *P_gain, const float *I_ga
 
 task main()
 {
-
 	unsigned short reflected_middle = 45;
 	//unsigned short reflected_black, reflected_white;
 	//getColorReflected(colorSensor);
@@ -439,6 +438,7 @@ task main()
 	display_help(&motor_power, &P_gain, &I_gain, &D_gain);
 	while(true)
 	{
+		/********************************Line Tracer********************************/
 		reflected_value = getColorReflected(colorSensor);
 		error = (reflected_value - reflected_middle);
 		steering = P_gain*error + D_gain*(error - last_error) + I_gain*error_integration;
@@ -447,6 +447,7 @@ task main()
 
 		steering_robot(steering, motor_power);
 
+		/********************************Interface for Manipulating Parameters********************************/
 		if(getButtonPress(buttonEnter))
 		{
 			stop_left_right_motor();
@@ -508,5 +509,4 @@ task main()
 			display_updated = false;
 		}
 	}
-
 }
