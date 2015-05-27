@@ -54,9 +54,6 @@ task main()
 	robotmotion_stop_left_right_motor();
 
 	//wait untill the plate starts rotating and stopping.
-
-
-
 	wait1Msec(200);
 	long gyro_rate_filtered = low_pass_filter(getGyroRate(gyroSensor));
 	for(int i=0;i<10;i++)
@@ -69,7 +66,6 @@ task main()
 		if(abs(gyro_rate_filtered) > 40)
 			break;
 	}
-
 	while(true)
 	{
 		gyro_rate_filtered = low_pass_filter(getGyroRate(gyroSensor));
@@ -96,6 +92,10 @@ task main()
 	fileClose(file);
 	while(getButtonPress(buttonEnter)==1);
 	*/
+
+	while(getGyroRate(gyroSensor) == 0);
+	while(getGyroRate(gyroSensor) != 0);
+
 
 	//rotate to the correct direction
 	long current_angle = (getGyroDegrees(gyroSensor)+360)%360;//normalize in range of 0~360
