@@ -8,6 +8,8 @@
 
 4. Move forward and escape the plate.
 
+![](https://github.com/jaejunlee0538/EV3_RobotC_Examples/blob/master/Educator Robot/Project/RotatingPlate/rotating_plate_mission.jpg)
+
 
 #### Waiting for the plate rotating and stopping
 
@@ -28,26 +30,26 @@ And I used a threshold `40` for recognizing rotating of the plate.
 ***But as this threshold is hard coded value, it cannot be applied to the case of lower speed.***
 
 ```C
-  long low_pass_filter(long current_data)
-  {
-  	static bool first_run = true;
-  	static float filtered = 0;
-  	const static float alpha = 0.01;
-  	if(first_run)
-  	{
-  		filtered = current_data;
-  		first_run = false;
-  	}
-  	else
-  	{
-  		filtered = (1.0 - alpha)*filtered + alpha*current_data;
-  	}
+	long low_pass_filter(long current_data)
+	{
+	  static bool first_run = true;
+	  static float filtered = 0;
+	  const static float alpha = 0.01;
+	  if(first_run)
+	  {
+	  	filtered = current_data;
+	  	first_run = false;
+	  }
+	  else
+	  {
+	  	filtered = (1.0 - alpha)*filtered + alpha*current_data;
+	  }
+	
+	  return filtered;
+	}
   
-  	return filtered;
-  }
-  
-  //...main routine
-  wait1Msec(200);
+	//...main routine
+	wait1Msec(200);
 	long gyro_rate_filtered = low_pass_filter(getGyroRate(gyroSensor));
 	for(int i=0;i<10;i++)
 	{
@@ -71,7 +73,7 @@ I found the ***hard-coded*** threshold by logging gyro sensor data.
 By activating the following code and deactivating `//wait untill the plate starts rotating and stopping.` part, you can record the raw sensor data.
 
 ``` C
-//Gyro Rate Recording
+	//Gyro Rate Recording
 	long rate = 0;
 	long file = fileOpenWrite("gyro_rate.txt");
 	long t = 0;
@@ -94,8 +96,8 @@ By activating the following code and deactivating `//wait untill the plate start
 #### Gyro Rate Sensor Data
 The plate was rotated by EV3 Brick.
 
-```
-  moveMotorTarget(actuator, rotating_deg, sgn(rotating_deg)*30);
+``` C
+	moveMotorTarget(actuator, rotating_deg, sgn(rotating_deg)*30);
 	waitUntilMotorStop(actuator);
 ```
 
